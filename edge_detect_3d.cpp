@@ -11,37 +11,32 @@ using namespace std;
 using namespace pcl;
 using namespace pcl::io;
 
-
-
 int main ()
 {
-    PointCloud<PointXYZ>::Ptr cloud(new PointCloud<PointXYZ>);
-    PointCloud<PointXYZ>::Ptr cloud_new(new PointCloud<PointXYZ>);
+    pointcloud<pointxyz>::ptr cloud(new pointcloud<pointxyz>);
+    pointcloud<pointxyz>::ptr cloud_new(new pointcloud<pointxyz>);
 
-
-    if(pcl::io::loadPCDFile("path of the pcd file", *cloud) == -1)//mention the path of the pcd file you wish to load
+    if(pcl::io::loadpcdfile("path of the pcd file", *cloud) == -1)//mention the path of the pcd file you wish to load
     {
         cout<<"failed to open the pcd file"<<endl;
         return(-1);
     }
 
     vector<int> indices;
-    removeNaNFromPointCloud(*cloud,*cloud,indices); //removing points which whose values do not represent a number
+    removenanfrompointcloud(*cloud,*cloud,indices); //removing points which whose values do not represent a number
 
     for(int i =1; i < cloud->size() - 1;i++)
     {
-        float diffX, diffY, diffZ;
+        float diffx, diffy, diffz;
+        diffx = -1*cloud->points[i+1].x +2*cloud->points[i].x - cloud->points[i-1].x ;
+        diffy = cloud->points[i+1].y - 2*cloud->points[i-1].y + cloud->points[i].y ;
+        diffz = -1*cloud->points[i+1].z+2*cloud->points[i].z - cloud->points[i-1].z ;
 
-
-        diffX = -1*cloud->points[i+1].x +2*cloud->points[i].x - cloud->points[i-1].x ;
-        diffY = cloud->points[i+1].y - 2*cloud->points[i-1].y + cloud->points[i].y ;
-        diffZ = -1*cloud->points[i+1].z+2*cloud->points[i].z - cloud->points[i-1].z ;
-
-        float diff = diffX*diffX + diffY*diffY + diffZ*diffZ;
+        float diff = diffx*diffx + diffy*diffy + diffz*diffz;
 
         if(sqrt(diff) > 0.3)
         {
-            PointXYZ pt;
+            pointxyz pt;
             pt.x = cloud->points[i].x;
             pt.y = cloud->points[i].y;
             pt.z = cloud->points[i].z;
@@ -49,15 +44,15 @@ int main ()
         }
     }
 
-    boost::shared_ptr< ::pcl::visualization::PCLVisualizer > viewer (new ::pcl::visualization::PCLVisualizer("3D Viewer"));
-    viewer->initCameraParameters();
-    viewer->setBackgroundColor(0, 0, 0);
-    viewer->addCoordinateSystem(1.0);
-    viewer->addPointCloud<PointXYZ>(cloud_new, "cloud");
-    viewer->setPointCloudRenderingProperties(pcl::visualization::PCL_VISUALIZER_POINT_SIZE, 1, "cloud");
-    while(!viewer->wasStopped())
+    boost::shared_ptr< ::pcl::visualization::pclvisualizer > viewer (new ::pcl::visualization::pclvisualizer("3d viewer"));
+    viewer->initcameraparameters();
+    viewer->setbackgroundcolor(0, 0, 0);
+    viewer->addcoordinatesystem(1.0);
+    viewer->addpointcloud<pointxyz>(cloud_new, "cloud");
+    viewer->setpointcloudrenderingproperties(pcl::visualization::pcl_visualizer_point_size, 1, "cloud");
+    while(!viewer->wasstopped())
     {
-        viewer->spinOnce(10);
+        viewer->spinonce(10);
 
     }
     return 0;
