@@ -31,7 +31,7 @@ double beta;
 Mat src_gray;
 Mat grad;
 
-Mat image = imread("/home/engineer/Desktop/lanes.jpg");
+Mat image = imread("lanes.jpg");
 
 void cumulative_distribution()
 {
