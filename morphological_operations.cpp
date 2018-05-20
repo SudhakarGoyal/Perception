@@ -31,45 +31,116 @@ double beta;
 Mat src_gray;
 Mat grad;
 
-Mat image = imread("lanes.jpg");
+Mat image = imread("/home/engineer/Desktop/lanes.jpg");
 
-void cumulative_distribution()
+/*
+ *
+ * cumulative distribution logic needs to be corrected
+ *
+ * */
+
+//void cumulative_distribution()
+//{
+//    Mat new_image = image.clone();
+//    float cumulative_sum[3];
+//    for(int i = 0; i < image.cols; i++)
+//    {
+//        for(int j = 0 ; j < image.rows; j++)
+//        {
+//            for(int k =0; k < 3; k++)
+//            {
+//                cumulative_sum[k]+=image.at<Vec3b>(j,i)[k];
+//            }
+//        }
+//    }
+
+//    float cumulative_dis[3];
+//    for(int i = 0; i < 3; i++)
+//    {
+//        cumulative_dis[i] = cumulative_sum[i]/(image.rows*image.cols);
+
+//    }
+//    float alpha = 0.8;
+//    for(int i = 0 ; i < image.cols; i++)
+//    {
+//        for(int j = 0 ; j < image.rows; j++)
+//        {
+//            for(int k = 0; k < 3; k++)
+//                new_image.at<Vec3b>(j,i)[k] = saturate_cast<uchar>(alpha*cumulative_dis[k] - (1-alpha)*image.at<Vec3b>(j,i)[k]);
+//        }
+//    }
+
+//    namedWindow("cum",WINDOW_AUTOSIZE);
+//    imshow("cum", new_image);
+
+
+//}
+
+
+vector<int> ascending(vector<int>a)
 {
-    Mat new_image = image.clone();
-    float cumulative_sum[3];
-    for(int i = 0; i < image.cols; i++)
+    for(int i = 0 ; i < a.size()-1; i++)
     {
-        for(int j = 0 ; j < image.rows; j++)
+        for(int j = i+1; j< a.size(); j++ )
         {
-            for(int k =0; k < 3; k++)
+            if(a[i] > a[j])
             {
-                cumulative_sum[k]+=image.at<Vec3b>(j,i)[k];
+                int temp = a[j];
+                a[j] = a[i];
+                a[i] = temp;
             }
         }
     }
+    return a;
+}
 
-    float cumulative_dis[3];
-    for(int i = 0; i < 3; i++)
-    {
-        cumulative_dis[i] = cumulative_sum[i]/(image.rows*image.cols);
+float median(vector<int>a)
+{
+    vector<int>b = ascending(a);
 
-    }
-    float alpha = 0.8;
-    for(int i = 0 ; i < image.cols; i++)
-    {
-        for(int j = 0 ; j < image.rows; j++)
-        {
-            for(int k = 0; k < 3; k++)
-                new_image.at<Vec3b>(j,i)[k] = saturate_cast<uchar>(alpha*cumulative_dis[k] - (1-alpha)*image.at<Vec3b>(j,i)[k]);
-        }
-    }
-
-    namedWindow("cum",WINDOW_AUTOSIZE);
-    imshow("cum", new_image);
-
+    if(b.size()%2 == 0)
+        return float(((b[b.size()/2] + b[b.size()/2 - 1])/2));
+    else
+        return (b[(b.size()-1)/2]);
 
 }
 
+void median_filter(int size)
+{
+    Mat new_image = image.clone();
+    vector<int> arr_r, arr_b, arr_g;
+    int start = ((size+1)/2) -1;
+    for(int i = 1; i < image.cols; i++)
+    {
+        for(int j = 1; j < image.rows; j++)
+        {
+            arr_r.clear();
+            arr_g.clear();
+            arr_b.clear();
+            for(int k = -start;k <= start; k++)
+            {
+                for(int l = -start; l <=start; l++ )
+                {
+
+                    arr_b.push_back(image.at<Vec3b>(j+l,k+i)[0]);
+                    arr_g.push_back(image.at<Vec3b>(j+l,k+i)[1]);
+                    arr_r.push_back(image.at<Vec3b>(j+l,k+i)[2]);
+                }
+            }
+
+            new_image.at<Vec3b>(j,i)[2] = median(arr_r);
+            new_image.at<Vec3b>(j,i)[1] = median(arr_g);
+            new_image.at<Vec3b>(j,i)[0] = median(arr_b);
+
+
+        }
+    }
+
+    namedWindow("median", WINDOW_AUTOSIZE);
+    imshow("median", new_image);
+
+
+}
 Mat average_smoothing(Mat img)
 {
     Mat new_img = img.clone();
@@ -161,6 +232,9 @@ void contrast_trackbar(int, void*)
     imshow("contrast", new_img);
 }
 
+
+
+
 void edge_trackbar( int, void* )
 {
     alpha = (double) alpha_slider ;
@@ -198,7 +272,7 @@ int main()
 
     cvtColor( image, src_gray, CV_BGR2GRAY );
 
-    cumulative_distribution();
+//    cumulative_distribution();
     char edge[50];
     char brightness[50];
     char contrast[50];
@@ -219,6 +293,7 @@ int main()
     brightness_trackbar(brightness_slider , 0);
     contrast_trackbar(contrast_slider , 0);
     gamma_trackbar(gamma_slider , 0);
+    median_filter(3); //change the window size
 
     cv::waitKey(0);
     return 0;
