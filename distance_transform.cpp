@@ -16,14 +16,12 @@
 
 using namespace cv;
 using namespace std;
-Mat image = imread("/home/engineer/Desktop/binary.png");
+Mat image = imread("binary.png");
 
 
 void distance_transform()
 {
     Mat gray;
-
-
     cvtColor(image, gray,CV_BGR2GRAY );
 
     for(int i = 0; i < gray.cols; i++)
@@ -38,7 +36,6 @@ void distance_transform()
     }
     Mat final_pass = gray.clone();
     Mat temp = gray.clone();
-
 
     for(int i = 0; i < gray.cols; i++)
     {
@@ -72,8 +69,6 @@ void distance_transform()
     }
     Mat backward_pass = temp.clone();
 
-
-
     for(int i = 0; i < temp.cols; i++)
     {
         for(int j = 0; j <temp.rows; j++)
@@ -82,8 +77,6 @@ void distance_transform()
         }
     }
 
-
-
     namedWindow("binary", WINDOW_AUTOSIZE );
     imshow("binary", final_pass);
 }
@@ -91,7 +84,6 @@ void distance_transform()
 
 int main()
 {
-
 
 //    Mat gray = Mat(image.rows, image.cols, CV_8UC1);
 //    for(int i = 0; i < image.cols; i++)
@@ -105,9 +97,6 @@ int main()
 //    imshow("gray", gray);
 
     distance_transform();
-
-
-
     cv::waitKey(0);
     return 0;
 
