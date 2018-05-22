@@ -85,11 +85,7 @@ void distance_transform()
         }
     }
 
-    Mat new_img;
 
-    threshold(gray, gray, 40, 255, CV_THRESH_BINARY | CV_THRESH_OTSU);
-    distanceTransform(gray,new_img,CV_DIST_L1,3);
- normalize(new_img, new_img, 0, 1., NORM_MINMAX);
     namedWindow("binary", WINDOW_AUTOSIZE );
     imshow("binary", final_pass);
 }
