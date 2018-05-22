@@ -65,9 +65,9 @@ void distance_transform()
     Mat forward_pass = temp.clone();
     temp = binary.clone();
 
-    for(int i = temp.rows - 1; i > 0; i--)
+    for(int i = temp.rows - 2; i >= 0; i--)
     {
-        for(int j = temp.cols -1; j > 0; j--)
+        for(int j = temp.cols -2; j >= 0; j--)
         {
             if(temp.at<uchar>(i,j) == 1)
                 temp.at<uchar>(i,j) = (min(temp.at<uchar>(i+1,j), temp.at<uchar>(i,j+1)) + 1);
